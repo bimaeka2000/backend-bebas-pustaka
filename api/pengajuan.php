@@ -11,7 +11,7 @@ switch ($method) {
     case 'GET':
         if ($id) {
             $stmt = $db->prepare(
-                'SELECT pb.*, m.nama, m.email, j.nama_jurusan, j.fakultas, j.gelar,
+                'SELECT pb.*, m.nama, m.email, m.angkatan, j.nama_jurusan, j.fakultas AS nama_fakultas, j.gelar,
                         rp.buku_dipinjam, rp.tunggakan_denda, rp.status_bebas_tanggungan,
                         pt.status_verifikasi AS status_ta,
                         s.nomor_surat, s.tgl_terbit, s.file_pdf, s.file_ttd
@@ -38,7 +38,7 @@ switch ($method) {
                 $where[]  = 'pb.nim = ?';
                 $params[] = $_GET['nim'];
             }
-            $sql = 'SELECT pb.*, m.nama, m.email, j.nama_jurusan, j.fakultas, j.gelar,
+            $sql = 'SELECT pb.*, m.nama, m.email, m.angkatan, j.nama_jurusan, j.fakultas AS nama_fakultas, j.gelar,
                            rp.buku_dipinjam, rp.tunggakan_denda, rp.status_bebas_tanggungan,
                            s.nomor_surat, s.file_ttd
                     FROM pengajuan_bebas_pustaka pb

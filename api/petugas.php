@@ -63,6 +63,11 @@ switch ($method) {
         $upload_dir = __DIR__ . '/../uploads/petugas/';
         if (!is_dir($upload_dir)) mkdir($upload_dir, 0755, true);
 
+        $contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+        if ($contentLength > 0 && empty($_POST) && empty($_FILES) && stripos($_SERVER['CONTENT_TYPE'] ?? '', 'multipart/form-data') !== false) {
+            respond(false, null, 'Upload foto melebihi batas ukuran server', 413);
+        }
+
         // Jika request multipart/form-data
         $isMultipart = !empty($_FILES) || !empty($_POST);
         $body = $isMultipart ? $_POST : getRequestBody();
@@ -79,8 +84,19 @@ switch ($method) {
 
         // Upload foto jika ada file foto
         $fotoFilename = null;
-        if (!empty($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        if (isset($_FILES['foto']) && $_FILES['foto']['error'] !== UPLOAD_ERR_NO_FILE) {
             $file = $_FILES['foto'];
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                $uploadErrors = [
+                    UPLOAD_ERR_INI_SIZE => 'Ukuran foto melebihi batas upload server',
+                    UPLOAD_ERR_FORM_SIZE => 'Ukuran foto melebihi batas formulir',
+                    UPLOAD_ERR_PARTIAL => 'Foto hanya terunggah sebagian, silakan coba kembali',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Folder sementara upload tidak tersedia di server',
+                    UPLOAD_ERR_CANT_WRITE => 'Server gagal menyimpan file foto',
+                    UPLOAD_ERR_EXTENSION => 'Upload foto dihentikan oleh konfigurasi server',
+                ];
+                respond(false, null, $uploadErrors[$file['error']] ?? 'Terjadi kesalahan saat mengunggah foto', 400);
+            }
             $ext  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
             $allowed = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
             if (!in_array($ext, $allowed)) {

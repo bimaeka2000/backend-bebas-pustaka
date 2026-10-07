@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS petugas (
 -- TABLE: mahasiswa
 -- ============================================================
 CREATE TABLE IF NOT EXISTS mahasiswa (
+  id         INT AUTO_INCREMENT UNIQUE,
   nim        VARCHAR(20)  PRIMARY KEY,
   nama       VARCHAR(100) NOT NULL,
   email      VARCHAR(100) NOT NULL UNIQUE,

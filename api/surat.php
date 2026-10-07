@@ -96,7 +96,7 @@ switch ($method) {
         if ($id) {
             $stmt = $db->prepare(
                 'SELECT s.*, pb.nim, pb.tgl_pengajuan, pb.status AS status_pengajuan,
-                        m.nama, m.email, j.nama_jurusan, j.fakultas, j.gelar,
+                        m.nama AS nama_mahasiswa, m.email, j.nama_jurusan, j.fakultas, j.gelar,
                         p.nama AS nama_petugas, p.jabatan, p.nip AS nip_petugas, p.ttd AS ttd_petugas
                  FROM surat_bebas_pustaka s
                  JOIN pengajuan_bebas_pustaka pb ON pb.id = s.id_pengajuan
@@ -114,7 +114,7 @@ switch ($method) {
             if ($nimFilter) {
                 $stmt = $db->prepare(
                     'SELECT s.*, pb.nim, pb.tgl_pengajuan, pb.status AS status_pengajuan,
-                            m.nama, m.email, j.nama_jurusan, j.fakultas, j.gelar,
+                            m.nama AS nama_mahasiswa, m.email, j.nama_jurusan, j.fakultas, j.gelar,
                             p.nama AS nama_petugas, p.jabatan, p.nip AS nip_petugas, p.ttd AS ttd_petugas
                      FROM surat_bebas_pustaka s
                      JOIN pengajuan_bebas_pustaka pb ON pb.id = s.id_pengajuan
@@ -129,7 +129,7 @@ switch ($method) {
             } else {
                 $stmt = $db->query(
                     'SELECT s.*, pb.nim, pb.tgl_pengajuan, pb.status AS status_pengajuan,
-                            m.nama, m.email, j.nama_jurusan, j.fakultas, j.gelar,
+                            m.nama AS nama_mahasiswa, m.email, j.nama_jurusan, j.fakultas, j.gelar,
                             p.nama AS nama_petugas, p.jabatan, p.nip AS nip_petugas, p.ttd AS ttd_petugas
                      FROM surat_bebas_pustaka s
                      JOIN pengajuan_bebas_pustaka pb ON pb.id = s.id_pengajuan

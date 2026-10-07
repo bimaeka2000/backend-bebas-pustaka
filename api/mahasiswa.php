@@ -61,14 +61,28 @@ switch ($method) {
                 $page       = max(1, min($pageParam, $totalPages));
                 $offset     = ($page - 1) * $limit;
 
-                $sql = 'SELECT m.nim, m.nama, m.email, m.no_telepon, m.angkatan, m.created_at,
+                $sql = 'SELECT m.nim, m.nama, m.email, m.no_telepon, m.id_jurusan, m.angkatan, m.created_at,
                                j.nama_jurusan, j.fakultas,
                                rp.buku_dipinjam, rp.tunggakan_denda, rp.status_bebas_tanggungan
                         FROM mahasiswa m
                         JOIN jurusan j ON j.id = m.id_jurusan
                         LEFT JOIN riwayat_pinjaman rp ON rp.nim = m.nim';
                 if ($where) $sql .= ' WHERE ' . implode(' AND ', $where);
-                $sql .= " ORDER BY m.nama LIMIT $limit OFFSET $offset";
+
+                $sortFieldParam = $_GET['sortField'] ?? $_GET['sort_field'] ?? $_GET['sort_by'] ?? '';
+                $sortOrderParam = (string)($_GET['sortOrder'] ?? $_GET['sort_order'] ?? '');
+                $orderDir = ($sortOrderParam === '-1' || strtolower($sortOrderParam) === 'desc') ? 'DESC' : 'ASC';
+
+                $allowedSort = [
+                    'nim'          => 'm.nim',
+                    'nama'         => 'm.nama',
+                    'email'        => 'm.email',
+                    'angkatan'     => 'm.angkatan',
+                    'nama_jurusan' => 'j.nama_jurusan',
+                ];
+                $orderBy = isset($allowedSort[$sortFieldParam]) ? "{$allowedSort[$sortFieldParam]} $orderDir" : "m.nama ASC";
+
+                $sql .= " ORDER BY $orderBy LIMIT $limit OFFSET $offset";
 
                 $stmt = $db->prepare($sql);
                 $stmt->execute($params);
@@ -83,7 +97,7 @@ switch ($method) {
                     ],
                 ]);
             } else {
-                $sql = 'SELECT m.nim, m.nama, m.email, m.no_telepon, m.angkatan, m.created_at,
+                $sql = 'SELECT m.nim, m.nama, m.email, m.no_telepon, m.id_jurusan, m.angkatan, m.created_at,
                                j.nama_jurusan, j.fakultas,
                                rp.buku_dipinjam, rp.tunggakan_denda, rp.status_bebas_tanggungan
                         FROM mahasiswa m

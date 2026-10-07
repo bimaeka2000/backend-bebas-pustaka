@@ -30,7 +30,8 @@ $pengajuan_per_bulan = $db->query(
     "SELECT DATE_FORMAT(tgl_pengajuan, '%Y-%m') AS bulan,
             COUNT(*) AS total,
             SUM(status = 'disetujui') AS disetujui,
-            SUM(status = 'ditolak')   AS ditolak
+            SUM(status = 'ditolak')   AS ditolak,
+            SUM(status IN ('menunggu','diproses')) AS diproses
      FROM pengajuan_bebas_pustaka
      WHERE tgl_pengajuan >= DATE_SUB(NOW(), INTERVAL 12 MONTH)
      GROUP BY bulan
